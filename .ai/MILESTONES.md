@@ -31,7 +31,7 @@ M0–M4 产品主线已完成（macOS + 本机 ffmpeg 可验证）。M5–M9 消
 | M20 | 关于页桌面加宽一屏看完；作者显示 GitHub 头像 | `done` |
 | M21 | 关于页对称双栏；历史保留橙色提示；GIF 切文件不卡 UI | `done` |
 | M22 | 历史详情文件列表加高，多文件可滚动选择 | `done` |
-| M23 | GitHub 仓库；dev 日常 / main 发版；main 推送自动打三端包 | `done` |
+| M23 | GitHub 仓库；dev 日常 / main 发版；v* 标签编译安装包并发布 Release | `done` |
 | M24 | README 英文为默认；GitHub 仓库 About 中英对照 | `done` |
 
 ---
@@ -509,12 +509,12 @@ macOS 验证：转换后第三步出现预览器。历史列表仍是空壳（M3
 
 ## M23 — GitHub 仓库与发版流水线
 
-**目标**：代码上 GitHub；日常在 `dev` 开发；`main` 只作发版，推送后自动打 Android / macOS / Windows 包。
+**目标**：代码上 GitHub；日常在 `dev` 开发；`main` 只作发版；打 `v*` 标签才编译安装包并发布 GitHub Release。
 
 **范围内**
 
 - 仓库 `AlexWuYh/DicomFLow-App`；默认工作分支 `dev`
-- `.github/workflows/ci.yml`：`dev` / PR 跑 analyze + test；`main` 推送再打三端包并上传 artifact
+- `.github/workflows/ci.yml`：`dev` / `main` / PR 跑 analyze + test；仅 `v*` 标签编译三端包并发布 GitHub Release
 - Android 为 debug 签名 APK（无商店证书）；macOS 为 ad-hoc `.app` zip；Windows 为 Release 目录 zip（含 ffmpeg）
 
 **验收**
