@@ -3,7 +3,8 @@
 ```
 .
 ├── AGENTS.md
-├── README.md
+├── README.md                  # English (default)
+├── README.zh.md
 ├── .github/workflows/ci.yml   # main 发版打三端包；dev 只测
 ├── .ai/
 │   ├── 00_PROJECT.md

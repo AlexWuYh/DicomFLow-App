@@ -1,6 +1,6 @@
 # 里程碑
 
-当前：`M23` `done`
+当前：`M24` `done`
 
 产品 P0 平台：**Android + Windows**。
 
@@ -32,6 +32,7 @@ M0–M4 产品主线已完成（macOS + 本机 ffmpeg 可验证）。M5–M9 消
 | M21 | 关于页对称双栏；历史保留橙色提示；GIF 切文件不卡 UI | `done` |
 | M22 | 历史详情文件列表加高，多文件可滚动选择 | `done` |
 | M23 | GitHub 仓库；dev 日常 / main 发版；main 推送自动打三端包 | `done` |
+| M24 | README 英文为默认；GitHub 仓库 About 中英对照 | `done` |
 
 ---
 
@@ -519,6 +520,22 @@ macOS 验证：转换后第三步出现预览器。历史列表仍是空壳（M3
 **验收**
 
 - [x] 工作流文件在仓库中
+- [x] `flutter analyze` / `flutter test`
+
+---
+
+## M24 — README 英文默认、仓库 About 中英对照
+
+**目标**：GitHub 默认 README 为精简英文；仓库 About 描述中英对照。
+
+**范围内**
+
+- `README.md` 英文；`README.zh.md` 中文
+- GitHub 仓库 description 中英对照；不写个人网站地址
+
+**验收**
+
+- [x] `README.md` 为英文，链到 `README.zh.md`
 - [x] `flutter analyze` / `flutter test`
 
 每轮完成定义：**代码 + 测试 + 对本里程碑的 review（无新的 must-fix）+ D2D 文档同步。**
