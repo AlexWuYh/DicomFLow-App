@@ -28,7 +28,7 @@ flutter test
 flutter run -d macos
 ```
 
-日常在 **`dev`** 开发。向 **`main`** 推送即发版：GitHub Actions 会打 Android APK、macOS `.app` zip、Windows zip。
+日常在 **`dev`** 开发。向 **`main`** 推送会打安装包。打并推送 **`v1.0.0`** 标签会发布 GitHub Release（含三端安装包）。
 
 引擎：[DicomFlow](https://github.com/AlexWuYh/DicomFlow)。Agent 说明：[AGENTS.md](./AGENTS.md)。
 

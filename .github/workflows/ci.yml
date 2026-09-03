@@ -4,6 +4,7 @@ name: CI
 on:
   push:
     branches: [main, dev]
+    tags: ['v*']
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -40,7 +41,7 @@ jobs:
   android:
     name: Android APK
     needs: test
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')))
     runs-on: ubuntu-latest
     timeout-minutes: 60
     defaults:
@@ -69,7 +70,7 @@ jobs:
   macos:
     name: macOS app
     needs: test
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')))
     runs-on: macos-latest
     timeout-minutes: 60
     defaults:
@@ -98,7 +99,7 @@ jobs:
   windows:
     name: Windows package
     needs: test
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')))
     runs-on: windows-latest
     timeout-minutes: 60
     defaults:
@@ -132,3 +133,39 @@ jobs:
           name: DicomFlow-windows
           path: DicomFlow-windows.zip
           if-no-files-found: error
+
+  release:
+    name: GitHub Release
+    needs: [android, macos, windows]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+      - name: Name files for the release
+        run: |
+          mkdir -p out
+          cp dist/DicomFlow-android-apk/app-release.apk "out/DicomFlow-${GITHUB_REF_NAME}-android.apk"
+          cp dist/DicomFlow-macos/DicomFlow-macos.zip "out/DicomFlow-${GITHUB_REF_NAME}-macos.zip"
+          cp dist/DicomFlow-windows/DicomFlow-windows.zip "out/DicomFlow-${GITHUB_REF_NAME}-windows.zip"
+          ls -la out
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: DicomFlow ${{ github.ref_name }}
+          generate_release_notes: true
+          files: out/*
+          body: |
+            First packaged build of DicomFlow App.
+
+            Convert hospital DICOM archives to MP4/GIF on this device. Offline. Not for diagnosis.
+
+            医院 DICOM 压缩包本机转成 MP4/GIF。全程离线，不作诊断依据。
+
+            | File | Notes |
+            | --- | --- |
+            | `DicomFlow-${{ github.ref_name }}-android.apk` | Debug-signed; not for Play Store |
+            | `DicomFlow-${{ github.ref_name }}-macos.zip` | Ad-hoc signed `.app`; not notarized |
+            | `DicomFlow-${{ github.ref_name }}-windows.zip` | Portable Release folder, includes ffmpeg |

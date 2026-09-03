@@ -28,7 +28,7 @@ flutter test
 flutter run -d macos
 ```
 
-Work on **`dev`**. Push **`main`** to cut a release; GitHub Actions builds an Android APK, a macOS `.app` zip, and a Windows zip.
+Work on **`dev`**. Push **`main`** to build packages. Tag **`v1.0.0`** (and push the tag) to publish a GitHub Release with the installers.
 
 Engine: [DicomFlow](https://github.com/AlexWuYh/DicomFlow). Agent notes: [AGENTS.md](./AGENTS.md).
 
