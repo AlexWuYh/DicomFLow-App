@@ -50,9 +50,13 @@ testdata/private/
 **/windows/flutter/ephemeral/
 **/macos/Flutter/ephemeral/
 
-# Bundled ffmpeg binaries (fetched; too large for git)
+# Bundled ffmpeg / 7-Zip binaries (fetched; too large for git)
 dicomflow_app/third_party/ffmpeg/**
 !dicomflow_app/third_party/ffmpeg/README.md
+dicomflow_app/third_party/7zip/**
+!dicomflow_app/third_party/7zip/README.md
 dicomflow_app/macos/Runner/Resources/ffmpeg
 dicomflow_app/macos/Runner/Resources/ffprobe
+dicomflow_app/macos/Runner/Resources/7zz
 dicomflow_app/windows/runner/resources/ffmpeg/
+dicomflow_app/windows/runner/resources/7zip/

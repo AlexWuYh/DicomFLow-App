@@ -5,7 +5,7 @@
 ├── AGENTS.md
 ├── README.md                  # English (default)
 ├── README.zh.md
-├── .github/workflows/ci.yml   # main 发版打三端包；dev 只测
+├── .github/workflows/ci.yml   # v* 标签打三端包；dev/main 只测
 ├── .ai/
 │   ├── 00_PROJECT.md
 │   ├── 01_DESIGN.md
@@ -27,11 +27,13 @@
     ├── assets/author_github.png  # GitHub 作者头像（离线）
     ├── test/
     ├── tool/fetch_ffmpeg.dart
+    ├── tool/fetch_7zip.dart     # 官方 7-Zip → macOS Resources / Windows resources
     ├── tool/render_app_icon.py  # BrandMark → 各平台图标
     ├── third_party/ffmpeg/ # 下载缓存（gitignore）
-    ├── android/            # P0；FFmpegKit
-    ├── windows/            # P0；runner/resources/ffmpeg
-    └── macos/              # Runner/Resources/ffmpeg
+    ├── third_party/7zip/   # 下载缓存（gitignore）
+    ├── android/            # P0；FFmpegKit + 7-Zip-JBinding
+    ├── windows/            # P0；runner/resources/ffmpeg + 7zip
+    └── macos/              # Runner/Resources/ffmpeg + 7zz
 ```
 
 ## 模块边界

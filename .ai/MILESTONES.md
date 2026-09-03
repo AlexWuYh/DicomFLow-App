@@ -1,6 +1,6 @@
 # 里程碑
 
-当前：`M24` `done`
+当前：`M25` `done`
 
 产品 P0 平台：**Android + Windows**。
 
@@ -33,6 +33,7 @@ M0–M4 产品主线已完成（macOS + 本机 ffmpeg 可验证）。M5–M9 消
 | M22 | 历史详情文件列表加高，多文件可滚动选择 | `done` |
 | M23 | GitHub 仓库；dev 日常 / main 发版；v* 标签编译安装包并发布 Release | `done` |
 | M24 | README 英文为默认；GitHub 仓库 About 中英对照 | `done` |
+| M25 | 安装包捆绑 rar/7z 解压（Android JNI + 桌面 7-Zip） | `done` |
 
 ---
 
@@ -537,5 +538,26 @@ macOS 验证：转换后第三步出现预览器。历史列表仍是空壳（M3
 
 - [x] `README.md` 为英文，链到 `README.zh.md`
 - [x] `flutter analyze` / `flutter test`
+
+---
+
+## M25 — 捆绑 rar / 7z 解压，开箱即用
+
+**目标**：Android / Windows / macOS 安装包都能直接解医院 rar、7z，不必再装 Unarchiver 或 7-Zip。
+
+**范围内**
+
+- 桌面：官方 7-Zip 25.01（macOS `7zz`，Windows `7z.exe` + `7z.dll`），`dart run tool/fetch_7zip.dart` 打进包内
+- Android：7-Zip-JBinding-4Android（RAR5、16 KB 对齐），转换在 UI isolate 走 MethodChannel
+- 解压后仍做 Zip Slip、symlink 拒绝与体积限额
+- 无解压组件时错误改为「安装包内解压组件不可用」，建议转 zip
+
+**范围外**：密码包、分卷 rar、商店签名、把 `testdata/private` 的医院包纳入 CI。
+
+**验收**
+
+- [x] `flutter analyze` / `flutter test`
+- [x] 本机 `7zz` 能列出并抽出医院 `C252708.rar`（RAR5）
+- [x] macOS / Windows 包内有 7-Zip；Android 不依赖系统 unar
 
 每轮完成定义：**代码 + 测试 + 对本里程碑的 review（无新的 must-fix）+ D2D 文档同步。**

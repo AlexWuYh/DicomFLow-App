@@ -13,6 +13,9 @@ const maxRatio = 100.0;
 const ratioFloorBytes = 32 * 1024 * 1024;
 const maxInputBytes = 1024 * 1024 * 1024;
 
+/// Android JNI / tests: extract [archive] into [dest] without a CLI binary.
+Future<void> Function(File archive, Directory dest)? bundledArchiveExtract;
+
 bool isUnsafeArchiveName(String name) {
   final rel = archiveMemberRelative(name);
   if (rel == null) return false;
@@ -274,11 +277,24 @@ Future<Directory> prepareInput(
 }
 
 Future<void> _extractWithTool(File archive, Directory dest, {required String kind}) async {
+  final hook = bundledArchiveExtract;
+  if (hook != null) {
+    final staging = Directory.systemTemp.createTempSync('dicomflow_stg_');
+    try {
+      await hook(archive, staging);
+      assertExtractTreeSafe(staging);
+      _relocateStaging(staging, dest);
+    } finally {
+      _cleanup(staging);
+    }
+    return;
+  }
+
   final tool = resolveExtractor(kind);
   if (tool == null) {
     throw EngineException(
       EngineException.invalidArchive,
-      '本机没有解压 $kind 的工具。请安装 The Unarchiver 命令行（unar）或 7-Zip，或先把压缩包转为 zip。',
+      '无法解压 $kind：安装包内解压组件不可用。请把压缩包转为 zip 后再试。',
     );
   }
 
@@ -432,8 +448,29 @@ String? _siblingTool(String toolPath, String name) {
   return null;
 }
 
-/// Resolve unar/7z/unrar without requiring Unix `which`.
+/// Bundled 7-Zip next to the executable or in macOS Resources (like ffmpeg).
+List<String> bundledExtractorCandidates() {
+  final out = <String>[];
+  final env = Platform.environment['DICOMFLOW_7Z'];
+  if (env != null && env.isNotEmpty) out.add(env);
+  try {
+    final exeDir = p.dirname(Platform.resolvedExecutable);
+    out.addAll([
+      p.join(exeDir, '7zz'),
+      p.join(exeDir, '7z.exe'),
+      p.join(exeDir, '7z'),
+      p.normalize(p.join(exeDir, '..', 'Resources', '7zz')),
+      p.normalize(p.join(exeDir, '..', 'Resources', '7z')),
+    ]);
+  } catch (_) {}
+  return out;
+}
+
+/// Resolve bundled 7-Zip, then unar/7z/unrar, without requiring Unix `which`.
 String? resolveExtractor(String kind) {
+  for (final path in bundledExtractorCandidates()) {
+    if (File(path).existsSync()) return path;
+  }
   final names = kind == 'rar'
       ? <String>[
           'unar',

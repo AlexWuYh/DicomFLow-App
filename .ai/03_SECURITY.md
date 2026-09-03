@@ -36,7 +36,7 @@ Zip Slip：成员名去掉 Windows 盘符与前导 `/` 后，若规范化路径�
 - 文件选择用系统选择器（SAF / 文件对话框），不遍历全盘。导出到文件夹只写入用户刚选中的目录，目标路径不得逃出该目录。
 - macOS Debug 关闭 App Sandbox。Release 仍沙箱并申请 `files.user-selected.read-write`；编码走包内 `Contents/Resources/ffmpeg`（工作目录在 application support）。
 - Android 编码走 FFmpegKit 进程内库，不 `Process.run` 外部 ffmpeg。
-- rar/7z 解压后仍做路径穿越检查、symlink 拒绝与体积限额。提取器查找不依赖 Unix `which`。
+- rar/7z 解压后仍做路径穿越检查、symlink 拒绝与体积限额。桌面优先用包内 7-Zip；Android 用 JNI 7-Zip-JBinding，不 `Process.run` 外部 unar。提取器查找不依赖 Unix `which`。
 - Android `allowBackup=false`，`dataExtractionRules` 排除应用数据；结果不进 Google 备份。
 - Debug 构建可保留 INTERNET（热重载）；Release 转换路径不得依赖外网。
 - GitHub Actions 打的 Android APK 仍用 debug 签名，不能当商店包。不把 `key.properties` / keystore 写入仓库。

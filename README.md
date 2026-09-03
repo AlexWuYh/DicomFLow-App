@@ -24,6 +24,7 @@ Flutter 3.44+.
 cd dicomflow_app
 flutter pub get
 dart run tool/fetch_ffmpeg.dart   # once, for macOS / Windows
+dart run tool/fetch_7zip.dart     # once, bundled 7-Zip for rar / 7z
 flutter test
 flutter run -d macos
 ```
@@ -34,4 +35,4 @@ Engine: [DicomFlow](https://github.com/AlexWuYh/DicomFlow). Agent notes: [AGENTS
 
 ## License
 
-MIT ([LICENSE](./LICENSE)). Bundled FFmpeg (libx264) is GPL-3.0; a build that includes it is distributed as GPL-3.0.
+MIT ([LICENSE](./LICENSE)). Bundled FFmpeg (libx264) is GPL-3.0; a build that includes it is distributed as GPL-3.0. Bundled 7-Zip is LGPL with the unRAR restriction.

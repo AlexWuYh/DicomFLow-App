@@ -175,7 +175,8 @@ class AboutPage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '安装包内捆绑的 FFmpeg（含 libx264）按 GPL-3.0 许可。带编码器分发的应用整体按 GPL-3.0 分发。'
-            '不含 FFmpeg 二进制时，源码仍可按 MIT 使用。',
+            '不含 FFmpeg 二进制时，源码仍可按 MIT 使用。'
+            'rar / 7z 解压使用捆绑的 7-Zip（LGPL，含 unRAR 限制）。',
             style: theme.textTheme.bodyMedium?.copyWith(height: 1.5, color: tokens.muted),
           ),
         ],

@@ -116,3 +116,14 @@ if(EXISTS "${FFMPEG_BUNDLE_DIR}/ffmpeg.exe")
     DESTINATION "${CMAKE_INSTALL_PREFIX}"
     COMPONENT Runtime)
 endif()
+
+# Bundled 7-Zip (fetched by tool/fetch_7zip.dart) for rar / 7z.
+set(SEVENZIP_BUNDLE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/runner/resources/7zip")
+if(EXISTS "${SEVENZIP_BUNDLE_DIR}/7z.exe")
+  install(PROGRAMS "${SEVENZIP_BUNDLE_DIR}/7z.exe"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}"
+    COMPONENT Runtime)
+  install(FILES "${SEVENZIP_BUNDLE_DIR}/7z.dll"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}"
+    COMPONENT Runtime)
+endif()

@@ -85,6 +85,7 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: dart run tool/fetch_ffmpeg.dart
+      - run: dart run tool/fetch_7zip.dart
       - run: flutter build macos --release
       - name: Zip DicomFlow.app
         run: |
@@ -114,6 +115,7 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: dart run tool/fetch_ffmpeg.dart
+      - run: dart run tool/fetch_7zip.dart
       - run: flutter build windows --release
       - name: Copy ffmpeg next to exe if missing
         shell: pwsh
@@ -123,6 +125,11 @@ jobs:
           if ((Test-Path "$src/ffmpeg.exe") -and -not (Test-Path "$rel/ffmpeg.exe")) {
             Copy-Item "$src/ffmpeg.exe" $rel
             Copy-Item "$src/ffprobe.exe" $rel -ErrorAction SilentlyContinue
+          }
+          $src7 = "windows/runner/resources/7zip"
+          if ((Test-Path "$src7/7z.exe") -and -not (Test-Path "$rel/7z.exe")) {
+            Copy-Item "$src7/7z.exe" $rel
+            Copy-Item "$src7/7z.dll" $rel
           }
       - name: Zip Release folder
         shell: pwsh
@@ -168,4 +175,4 @@ jobs:
             | --- | --- |
             | `DicomFlow-${{ github.ref_name }}-android.apk` | Debug-signed; not for Play Store |
             | `DicomFlow-${{ github.ref_name }}-macos.zip` | Ad-hoc signed `.app`; not notarized |
-            | `DicomFlow-${{ github.ref_name }}-windows.zip` | Portable Release folder, includes ffmpeg |
+            | `DicomFlow-${{ github.ref_name }}-windows.zip` | Portable Release folder, includes ffmpeg and 7-Zip |

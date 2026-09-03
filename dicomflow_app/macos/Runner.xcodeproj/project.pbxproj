@@ -28,6 +28,7 @@
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		A1FF00010000000100000001 /* ffmpeg in Resources */ = {isa = PBXBuildFile; fileRef = A1FF00010000000200000001 /* ffmpeg */; };
+		A1FF00010000000300000001 /* 7zz in Resources */ = {isa = PBXBuildFile; fileRef = A1FF00010000000400000001 /* 7zz */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 /* End PBXBuildFile section */
 
@@ -82,6 +83,7 @@
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		A1FF00010000000200000001 /* ffmpeg */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = Runner/Resources/ffmpeg; sourceTree = "<group>"; };
+		A1FF00010000000400000001 /* 7zz */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = Runner/Resources/7zz; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +151,7 @@
 				33CC10F42044A3C60003C045 /* MainMenu.xib */,
 				33CC10F72044A3C60003C045 /* Info.plist */,
 				A1FF00010000000200000001 /* ffmpeg */,
+				A1FF00010000000400000001 /* 7zz */,
 			);
 			name = Resources;
 			path = ..;
@@ -299,6 +302,7 @@
 				33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */,
 				33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */,
 				A1FF00010000000100000001 /* ffmpeg in Resources */,
+				A1FF00010000000300000001 /* 7zz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

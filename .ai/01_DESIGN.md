@@ -10,7 +10,7 @@ Flutter UI（Android / Windows；macOS 本机验证）
   历史页 ── JobStore（jobs.json）+ 本机结果文件
 ```
 
-引擎语义对齐 DicomFlow `.ai/04-engine.md`，**运行时独立**（不嵌 Python、不调线上 API）。
+引擎语义对齐 DicomFlow `.ai/04-engine.md`，**运行时独立**（不嵌 Python、不调线上 API）。rar / 7z 由安装包内 7-Zip 解压（桌面 CLI，Android JNI），不要求用户再装解压软件。
 
 ## 平台
 

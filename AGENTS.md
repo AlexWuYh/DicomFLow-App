@@ -7,7 +7,7 @@
 
 - **名称**：DicomFlow App
 - **一句话**：把医院导出的 DICOM 压缩包在本机转成 MP4/GIF，并在 Android / Windows 上预览、分享、管理历史。
-- **当前里程碑**：M24 `done`（README 英文默认；GitHub 仓库 About 中英对照）
+- **当前里程碑**：M25 `done`（安装包捆绑 rar/7z 解压，开箱即用）
 - **P0 平台**：Android、Windows
 - **本机验证**：macOS（开发机可 `flutter run -d macos` / `flutter build macos`，不替代 Android/Windows 发布验收）
 
@@ -31,6 +31,7 @@ Flutter SDK 若未在 PATH：`export PATH="$HOME/development/flutter/bin:$PATH"`
 cd dicomflow_app
 flutter pub get
 dart run tool/fetch_ffmpeg.dart   # 下载官方 ffmpeg 打进 macOS/Windows 包（约一次）
+dart run tool/fetch_7zip.dart     # 下载官方 7-Zip 打进 macOS/Windows 包（rar/7z）
 flutter analyze
 flutter test
 flutter run -d macos            # 本机验证（开发机）
@@ -53,6 +54,8 @@ git checkout main && git merge dev && git push origin main
 本机 2026-08-31：Android cmdline-tools 缺失。功能验证用 macOS 打包/运行；不要用 Chrome 勾 P0 验收。
 
 转换用捆绑 **ffmpeg**（`dart run tool/fetch_ffmpeg.dart`）：macOS 为 Resources 内 9.0.1 静态包，Windows 为 exe 旁 `ffmpeg.exe`。Android 走 FFmpegKit min-gpl（x264），不依赖系统 ffmpeg。`flutter run -d android` 仍需本机 Android SDK。
+
+rar / 7z 解压用捆绑 **7-Zip**（`dart run tool/fetch_7zip.dart`）：macOS 为 Resources 内 `7zz`，Windows 为 exe 旁 `7z.exe` + `7z.dll`。Android 走 7-Zip-JBinding（JNI，含 RAR5），不依赖系统 unar/7z。
 
 真实医院压缩包只放 `testdata/private/`（已 gitignore）。禁止 `git add -f` 该目录。
 

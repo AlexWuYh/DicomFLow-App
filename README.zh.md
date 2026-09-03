@@ -24,6 +24,7 @@
 cd dicomflow_app
 flutter pub get
 dart run tool/fetch_ffmpeg.dart   # macOS / Windows 打进包内，约一次
+dart run tool/fetch_7zip.dart     # 捆绑 7-Zip，解压 rar / 7z
 flutter test
 flutter run -d macos
 ```
@@ -34,4 +35,4 @@ flutter run -d macos
 
 ## 许可
 
-MIT（[LICENSE](./LICENSE)）。捆绑的 FFmpeg（libx264）为 GPL-3.0；带编码器的安装包按 GPL-3.0 分发。
+MIT（[LICENSE](./LICENSE)）。捆绑的 FFmpeg（libx264）为 GPL-3.0；带编码器的安装包按 GPL-3.0 分发。捆绑的 7-Zip 为 LGPL（含 unRAR 限制）。

@@ -131,6 +131,75 @@ void main() {
     expect(relativeInside(tmp.path, file.path), p.join('C252708', 'series', '-0010.DCM'));
   });
 
+  test('bundledExtractorCandidates look next to the executable', () {
+    final names = bundledExtractorCandidates().map(p.basename).toSet();
+    expect(names.contains('7zz') || names.contains('7z.exe'), isTrue);
+  });
+
+  test('rar magic uses bundled extract hook', () async {
+    final tmp = Directory.systemTemp.createTempSync('dicomflow_rar_');
+    addTearDown(() {
+      bundledArchiveExtract = null;
+      if (tmp.existsSync()) tmp.deleteSync(recursive: true);
+    });
+    bundledArchiveExtract = (archive, dest) async {
+      File(p.join(dest.path, 'series', 'a.dcm'))
+        ..parent.createSync(recursive: true)
+        ..writeAsBytesSync(const [1, 2, 3]);
+    };
+    final rar = File(p.join(tmp.path, 'study.rar'))
+      ..writeAsBytesSync(Uint8List.fromList([0x52, 0x61, 0x72, 0x21, 0, 0, 0, 0]));
+    final dest = Directory(p.join(tmp.path, 'out'));
+    final out = await prepareInput(rar, destDir: dest);
+    expect(File(p.join(out.path, 'series', 'a.dcm')).readAsBytesSync(), [1, 2, 3]);
+  });
+
+  test('7z magic uses bundled extract hook', () async {
+    final tmp = Directory.systemTemp.createTempSync('dicomflow_7z_');
+    addTearDown(() {
+      bundledArchiveExtract = null;
+      if (tmp.existsSync()) tmp.deleteSync(recursive: true);
+    });
+    bundledArchiveExtract = (archive, dest) async {
+      File(p.join(dest.path, 'b.dcm')).writeAsBytesSync(const [9]);
+    };
+    final seven = File(p.join(tmp.path, 'study.7z'))
+      ..writeAsBytesSync(Uint8List.fromList([0x37, 0x7a, 0xbc, 0xaf, 0, 0, 0, 0]));
+    final dest = Directory(p.join(tmp.path, 'out'));
+    final out = await prepareInput(seven, destDir: dest);
+    expect(File(p.join(out.path, 'b.dcm')).readAsBytesSync(), [9]);
+  });
+
+  test('Resources 7zz extracts a generated 7z when fetched', () async {
+    final zz = File(p.join('macos', 'Runner', 'Resources', '7zz'));
+    if (!zz.existsSync()) {
+      markTestSkipped('run dart run tool/fetch_7zip.dart');
+      return;
+    }
+    final tmp = Directory.systemTemp.createTempSync('dicomflow_7zz_');
+    addTearDown(() {
+      bundledArchiveExtract = null;
+      if (tmp.existsSync()) tmp.deleteSync(recursive: true);
+    });
+    File(p.join(tmp.path, 'x.dcm')).writeAsBytesSync(const [1, 2, 3]);
+    final seven = p.join(tmp.path, 't.7z');
+    final packed = Process.runSync(
+      zz.absolute.path,
+      ['a', seven, 'x.dcm'],
+      workingDirectory: tmp.path,
+    );
+    expect(packed.exitCode, 0, reason: '${packed.stderr}\n${packed.stdout}');
+    bundledArchiveExtract = (archive, dest) async {
+      final r = await Process.run(zz.absolute.path, ['x', '-y', '-o${dest.path}', archive.path]);
+      if (r.exitCode != 0) {
+        throw StateError('${r.stderr}\n${r.stdout}');
+      }
+    };
+    final dest = Directory(p.join(tmp.path, 'out'));
+    final out = await prepareInput(File(seven), destDir: dest);
+    expect(File(p.join(out.path, 'x.dcm')).readAsBytesSync(), [1, 2, 3]);
+  });
+
   test('empty zip is not a bomb, just empty dest', () async {
     final zip = ZipEncoder().encodeBytes(Archive());
     final tmp = Directory.systemTemp.createTempSync('dicomflow_empty_');
