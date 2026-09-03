@@ -1,6 +1,6 @@
 # 里程碑
 
-当前：`M25` `done`
+当前：`M26` `done`
 
 产品 P0 平台：**Android + Windows**。
 
@@ -34,6 +34,7 @@ M0–M4 产品主线已完成（macOS + 本机 ffmpeg 可验证）。M5–M9 消
 | M23 | GitHub 仓库；dev 日常 / main 发版；v* 标签编译安装包并发布 Release | `done` |
 | M24 | README 英文为默认；GitHub 仓库 About 中英对照 | `done` |
 | M25 | 安装包捆绑 rar/7z 解压（Android JNI + 桌面 7-Zip） | `done` |
+| M26 | Android 选 rar 开始转换不再闪退 | `done` |
 
 ---
 
@@ -559,5 +560,25 @@ macOS 验证：转换后第三步出现预览器。历史列表仍是空壳（M3
 - [x] `flutter analyze` / `flutter test`
 - [x] 本机 `7zz` 能列出并抽出医院 `C252708.rar`（RAR5）
 - [x] macOS / Windows 包内有 7-Zip；Android 不依赖系统 unar
+
+每轮完成定义：**代码 + 测试 + 对本里程碑的 review（无新的 must-fix）+ D2D 文档同步。**
+
+---
+
+## M26 — Android rar 转换闪退
+
+**目标**：Android 选医院 rar 点「开始转换」不再 native 崩溃。
+
+**范围内**
+
+- 用 `System.loadLibrary("7-Zip-JBinding")` + `SevenZip.initLoadedLibraries()`，禁止 `initSevenZipFromPlatformJAR()`（会去抽 Linux-arm JAR，JNI 未加载就 SIGSEGV）
+- 解压回调实现 `ICryptoGetTextPassword`；`getStream` 在 EXTRACT 时不返回 null
+- MethodChannel 捕获 `Throwable`，Dart 侧把 `PlatformException` 收成可读错误
+
+**范围外**：密码包、分卷 rar、本机无 Android SDK 的真机复测（需新 APK）。
+
+**验收**
+
+- [x] `flutter analyze` / `flutter test`
 
 每轮完成定义：**代码 + 测试 + 对本里程碑的 review（无新的 must-fix）+ D2D 文档同步。**

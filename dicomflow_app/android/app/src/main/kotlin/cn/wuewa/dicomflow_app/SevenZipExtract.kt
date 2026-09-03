@@ -3,6 +3,7 @@ package cn.wuewa.dicomflow_app
 import net.sf.sevenzipjbinding.ExtractAskMode
 import net.sf.sevenzipjbinding.ExtractOperationResult
 import net.sf.sevenzipjbinding.IArchiveExtractCallback
+import net.sf.sevenzipjbinding.ICryptoGetTextPassword
 import net.sf.sevenzipjbinding.IInArchive
 import net.sf.sevenzipjbinding.ISequentialOutStream
 import net.sf.sevenzipjbinding.PropID
@@ -34,11 +35,11 @@ object SevenZipExtract {
         if (inited) return
         synchronized(lock) {
             if (inited) return
-            try {
-                SevenZip.initSevenZipFromPlatformJAR()
-            } catch (_: Exception) {
-                // AAR already ships jniLibs; first API call loads them.
-            }
+            // Android AAR ships lib/ABI/lib7-Zip-JBinding.so. Do not call
+            // initSevenZipFromPlatformJAR(): that extracts a Linux-arm artifact
+            // from the JAR and leaves JNI unloaded, which SIGSEGVs on rar.
+            System.loadLibrary("7-Zip-JBinding")
+            SevenZip.initLoadedLibraries()
             inited = true
         }
     }
@@ -47,14 +48,17 @@ object SevenZipExtract {
 private class Callback(
     private val inArchive: IInArchive,
     private val destDir: File,
-) : IArchiveExtractCallback {
+) : IArchiveExtractCallback, ICryptoGetTextPassword {
     private var output: FileOutputStream? = null
+    private val destCanon = destDir.canonicalFile
 
     override fun setTotal(total: Long) {}
 
     override fun setCompleted(complete: Long) {}
 
     override fun prepareOperation(extractAskMode: ExtractAskMode?) {}
+
+    override fun cryptoGetTextPassword(): String = ""
 
     override fun setOperationResult(extractOperationResult: ExtractOperationResult?) {
         try {
@@ -67,20 +71,27 @@ private class Callback(
         }
     }
 
-    override fun getStream(index: Int, extractAskMode: ExtractAskMode?): ISequentialOutStream? {
-        if (extractAskMode != ExtractAskMode.EXTRACT) return null
-        val isFolder = inArchive.getProperty(index, PropID.IS_FOLDER) as Boolean? ?: false
-        if (isFolder) return null
-        val raw = inArchive.getProperty(index, PropID.PATH) as String? ?: return null
+    override fun getStream(index: Int, extractAskMode: ExtractAskMode?): ISequentialOutStream {
+        if (extractAskMode != ExtractAskMode.EXTRACT) {
+            return ISequentialOutStream { data -> data.size }
+        }
+        val isFolder = inArchive.getProperty(index, PropID.IS_FOLDER) as? Boolean ?: false
+        val raw = (inArchive.getProperty(index, PropID.PATH) as? String).orEmpty()
         val rel = raw.replace('\\', '/').trim('/')
-        if (rel.isEmpty() || rel.contains("..")) {
+        if (rel.isEmpty()) {
+            return ISequentialOutStream { data -> data.size }
+        }
+        if (rel.contains("..")) {
             throw SevenZipException("illegal archive path: $raw")
         }
         val outFile = File(destDir, rel)
-        val base = destDir.canonicalFile
         val target = outFile.canonicalFile
-        if (target != base && !target.path.startsWith(base.path + File.separator)) {
+        if (target != destCanon && !target.path.startsWith(destCanon.path + File.separator)) {
             throw SevenZipException("illegal archive path: $raw")
+        }
+        if (isFolder) {
+            outFile.mkdirs()
+            return ISequentialOutStream { data -> data.size }
         }
         outFile.parentFile?.mkdirs()
         output = FileOutputStream(outFile)

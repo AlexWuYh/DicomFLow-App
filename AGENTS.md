@@ -7,7 +7,7 @@
 
 - **名称**：DicomFlow App
 - **一句话**：把医院导出的 DICOM 压缩包在本机转成 MP4/GIF，并在 Android / Windows 上预览、分享、管理历史。
-- **当前里程碑**：M25 `done`（安装包捆绑 rar/7z 解压，开箱即用）
+- **当前里程碑**：M26 `done`（Android rar 转换闪退）
 - **P0 平台**：Android、Windows
 - **本机验证**：macOS（开发机可 `flutter run -d macos` / `flutter build macos`，不替代 Android/Windows 发布验收）
 

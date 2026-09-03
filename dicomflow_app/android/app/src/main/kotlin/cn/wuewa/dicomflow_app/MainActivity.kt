@@ -25,8 +25,8 @@ class MainActivity : FlutterActivity() {
                 try {
                     SevenZipExtract.extract(archive, dest)
                     runOnUiThread { result.success(0) }
-                } catch (e: Exception) {
-                    runOnUiThread { result.error("SEVENZIP", e.message, null) }
+                } catch (e: Throwable) {
+                    runOnUiThread { result.error("SEVENZIP", e.message ?: e.javaClass.simpleName, null) }
                 }
             }
         }
