@@ -29,7 +29,7 @@ flutter test
 flutter run -d macos
 ```
 
-日常在 **`dev`** 开发。发版代码合进 **`main`**。打并推送 **`v*`** 标签才会编译安装包并发布 GitHub Release。
+日常在 **`dev`** 开发。发版代码合进 **`main`**（流水线只在 `main` 跑测试）。打并推送 **`v*`** 标签才会编译安装包并发布 GitHub Release。
 
 引擎：[DicomFlow](https://github.com/AlexWuYh/DicomFlow)。Agent 说明：[AGENTS.md](./AGENTS.md)。
 

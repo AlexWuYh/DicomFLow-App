@@ -1,9 +1,9 @@
-# test on main/dev/PRs; installers only on v* tags (or manual dispatch)
+# test on main / PRs to main; installers only on v* tags (or manual dispatch)
 name: CI
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main]
     tags: ['v*']
   pull_request:
     branches: [main]

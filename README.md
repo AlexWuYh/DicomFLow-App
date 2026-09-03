@@ -29,7 +29,7 @@ flutter test
 flutter run -d macos
 ```
 
-Work on **`dev`**. Merge to **`main`** for the release branch. Push a **`v*`** tag to build installers and publish a GitHub Release.
+Work on **`dev`**. Merge to **`main`** for the release branch (CI tests run on `main`). Push a **`v*`** tag to build installers and publish a GitHub Release.
 
 Engine: [DicomFlow](https://github.com/AlexWuYh/DicomFlow). Agent notes: [AGENTS.md](./AGENTS.md).
 

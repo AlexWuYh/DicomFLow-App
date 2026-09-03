@@ -42,7 +42,7 @@ flutter build apk
 flutter build windows
 ```
 
-Git：日常在 **`dev`** 开发；**`main` 只发版**。`dev` / `main` 推送只跑测试。打并推送 **`v*`** 标签才编译安装包并发布 GitHub Release。`.github/workflows/ci.yml`。
+Git：日常在 **`dev`** 开发；**`main` 只发版**。向 **`main`** 推送（及指向 `main` 的 PR）跑测试。打并推送 **`v*`** 标签才编译安装包并发布 GitHub Release。`dev` 推送不跑流水线。`.github/workflows/ci.yml`。
 
 ```bash
 git checkout dev

@@ -515,7 +515,7 @@ macOS 验证：转换后第三步出现预览器。历史列表仍是空壳（M3
 **范围内**
 
 - 仓库 `AlexWuYh/DicomFLow-App`；默认工作分支 `dev`
-- `.github/workflows/ci.yml`：`dev` / `main` / PR 跑 analyze + test；仅 `v*` 标签编译三端包并发布 GitHub Release
+- `.github/workflows/ci.yml`：`main` 与指向 `main` 的 PR 跑 analyze + test；`dev` 推送不跑；仅 `v*` 标签编译三端包并发布 GitHub Release
 - Android 为 debug 签名 APK（无商店证书）；macOS 为 ad-hoc `.app` zip；Windows 为 Release 目录 zip（含 ffmpeg）
 
 **验收**
