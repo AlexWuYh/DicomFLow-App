@@ -1,0 +1,58 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Clinical / PHI — never commit or push
+data/
+input/
+testdata/private/
+*.dcm
+*.DCM
+*.rar
+*.7z
+!dicomflow_app/test/fixtures/**
+# Keep synthetic fixtures only; no hospital dumps in git
+
+# Android local
+**/android/local.properties
+**/android/.gradle/
+**/android/captures/
+**/key.properties
+**/*.jks
+**/*.keystore
+
+# Windows / macOS generated
+**/windows/flutter/ephemeral/
+**/macos/Flutter/ephemeral/
+
+# Bundled ffmpeg binaries (fetched; too large for git)
+dicomflow_app/third_party/ffmpeg/**
+!dicomflow_app/third_party/ffmpeg/README.md
+dicomflow_app/macos/Runner/Resources/ffmpeg
+dicomflow_app/macos/Runner/Resources/ffprobe
+dicomflow_app/windows/runner/resources/ffmpeg/
