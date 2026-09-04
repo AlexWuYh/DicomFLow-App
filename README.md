@@ -1,6 +1,6 @@
 # DicomFlow App
 
-Turn a hospital CT / MRI archive (zip, rar, or 7z) into MP4 or GIF **on this device**. Open it in a normal player — no PACS software.
+Turn hospital **CT / MRI scans** into MP4 or GIF **on this device**. Play them in a normal player — no PACS software.
 
 [中文说明](README.zh.md)
 
@@ -54,6 +54,17 @@ flutter run -d macos
 Work on **`dev`**. Merge to **`main`** for the release branch. Push a **`v*`** tag to build installers. Write a few lines in [`.github/release-notes.md`](.github/release-notes.md) before tagging.
 
 Engine: [DicomFlow](https://github.com/AlexWuYh/DicomFlow). Contributor notes: [AGENTS.md](./AGENTS.md).
+
+## What you can convert
+
+| You have | We accept |
+|----------|-----------|
+| Hospital CT / MRI scans | DICOM images (the files on the disc the hospital copied for you) |
+| Archive | zip, rar, 7z |
+| Files inside | `.dcm`, `.dicom`, `.ima`, or DICOM files with no extension |
+| Output | MP4 video or GIF |
+
+Uncompressed, JPEG, and RLE images usually convert. JPEG 2000 and some other hospital compressions may not — ask for an uncompressed or JPEG export.
 
 ## License
 

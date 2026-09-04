@@ -137,12 +137,17 @@ void main() {
     await tester.pump();
 
     expect(find.text('简介'), findsOneWidget);
+    expect(find.text('支持的片源'), findsOneWidget);
+    expect(find.textContaining('CT'), findsWidgets);
+    expect(find.textContaining('zip'), findsWidgets);
     expect(find.text('应用设置'), findsOneWidget);
     expect(find.text('历史保留时间'), findsOneWidget);
     expect(find.text('@AlexWuYh'), findsOneWidget);
     expect(find.byKey(const Key('author-avatar')), findsOneWidget);
     expect(find.textContaining('github.com/AlexWuYh', skipOffstage: false), findsWidgets);
     expect(find.textContaining('github.com/AlexWuYh/DicomFLow-App', skipOffstage: false), findsWidgets);
+    await tester.scrollUntilVisible(find.text('许可'), 240);
+    await tester.pump();
     expect(find.textContaining('MIT', skipOffstage: false), findsWidgets);
     expect(find.textContaining('GPL-3.0', skipOffstage: false), findsWidgets);
     expect(find.text('线上网页版'), findsNothing);
@@ -155,6 +160,7 @@ void main() {
 
     expect(find.byType(NavigationRail), findsOneWidget);
     expect(find.text('简介'), findsOneWidget);
+    expect(find.text('支持的片源'), findsOneWidget);
     expect(find.text('作者'), findsOneWidget);
     expect(find.text('开源项目'), findsOneWidget);
     expect(find.text('许可'), findsOneWidget);

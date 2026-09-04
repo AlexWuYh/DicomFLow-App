@@ -6,7 +6,7 @@
 ## 项目
 
 - **名称**：DicomFlow App
-- **一句话**：把医院导出的 DICOM 压缩包在本机转成 MP4/GIF，并在 Android / Windows 上预览、分享、管理历史。
+- **一句话**：把医院 CT / MRI 片子（DICOM，zip / rar / 7z）在本机转成 MP4/GIF，并在 Android / Windows 上预览、分享、管理历史。
 - **当前里程碑**：M32 `done`（手机合并成一个文件不再 OOM）
 - **P0 平台**：Android、Windows
 - **本机验证**：macOS（开发机可 `flutter run -d macos` / `flutter build macos`，不替代 Android/Windows 发布验收）

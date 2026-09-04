@@ -429,8 +429,8 @@ class _SetupWorkspace extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         desktop
-                            ? '把 zip / rar / 7z 拖进窗口，或点选文件。转换只在本机完成。'
-                            : '选择医院导出的 zip / rar / 7z。转换只在本机完成，不必上网。',
+                            ? '把医院 CT / MRI 片子（zip / rar / 7z）拖进窗口，或点选文件。转换只在本机完成。'
+                            : '选择医院导出的 CT / MRI 压缩包（zip / rar / 7z）。转换只在本机完成，不必上网。',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: tokens.muted,

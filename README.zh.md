@@ -1,6 +1,6 @@
 # DicomFlow App
 
-把医院给的 CT / MRI 压缩包（zip / rar / 7z）在**本机**转成 MP4 或 GIF，用普通播放器就能看，不必装专业阅片软件。
+把医院拷给你的 **CT / MRI 片子**在**本机**转成 MP4 或 GIF，用普通播放器就能看，不必装专业阅片软件。
 
 [English](README.md)
 
@@ -54,6 +54,17 @@ flutter run -d macos
 日常在 **`dev`** 开发。发版合进 **`main`**。打并推送 **`v*`** 标签才会出安装包。打标签前把本版说明写进 [`.github/release-notes.md`](.github/release-notes.md)。
 
 引擎：[DicomFlow](https://github.com/AlexWuYh/DicomFlow)。协作者说明：[AGENTS.md](./AGENTS.md)。
+
+## 支持转换的片源
+
+| 你拿到的 | 能转的 |
+|----------|--------|
+| 医院 CT / MRI 片子 | DICOM 影像（医院拷盘、光盘里常见的那种） |
+| 压缩包 | zip、rar、7z |
+| 包里的文件 | `.dcm`、`.dicom`、`.ima`，或没有后缀的 DICOM |
+| 转成 | MP4 视频或 GIF 动图 |
+
+常见未压缩、JPEG、RLE 片子可以转。JPEG 2000 等特殊压缩可能转不了，可让医院改导出未压缩或 JPEG。
 
 ## 许可
 

@@ -111,12 +111,31 @@ class AboutPage extends StatelessWidget {
   }
 
   Widget _introCard(ThemeData theme, DicomFlowTokens tokens) {
+    final body = theme.textTheme.bodyMedium?.copyWith(height: 1.5, color: tokens.muted);
     return _SectionCard(
       title: '简介',
-      child: Text(
-        '把医院导出的 CT / MRI 压缩包（zip / rar / 7z）在本机转成 MP4 或 GIF，方便发给医生用系统播放器查看。'
-        '转换全程离线，不上传影像。便于沟通查阅，不作诊断依据。',
-        style: theme.textTheme.bodyMedium?.copyWith(height: 1.5, color: tokens.muted),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '医院拷给你的 CT、MRI 片子，在本机转成 MP4 或 GIF，用普通播放器就能看。'
+            '全程离线，不上传影像。便于沟通查阅，不作诊断依据。',
+            style: body,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '支持的片源',
+            style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '片子：医院 CT、MRI 等 DICOM 影像\n'
+            '压缩包：zip、rar、7z\n'
+            '包内文件：.dcm、.dicom、.ima，或没有后缀的 DICOM\n'
+            '转成：MP4 视频或 GIF 动图',
+            style: body,
+          ),
+        ],
       ),
     );
   }

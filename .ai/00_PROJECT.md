@@ -2,7 +2,7 @@
 
 ## 一句话
 
-医院 DICOM 压缩包 → 本机 MP4/GIF，Android / Windows 上可预览（按片定位、局部放大）、分享给医生、管理历史。
+医院 CT / MRI 片子（DICOM 压缩包）→ 本机 MP4/GIF，Android / Windows 上可预览（按片定位、局部放大）、分享给医生、管理历史。
 
 ## 非目标
 
