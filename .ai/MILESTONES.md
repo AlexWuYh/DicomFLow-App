@@ -538,7 +538,8 @@ macOS 验证：转换后第三步出现预览器。历史列表仍是空壳（M3
 
 **范围内**
 
-- `README.md` 英文；`README.zh.md` 中文
+- `README.md` 英文；`README.zh.md` 中文；先下载与用法，开发说明放后面
+- 转换页截图 `docs/screenshot.png`
 - GitHub 仓库 description 中英对照；不写个人网站地址
 
 **验收**

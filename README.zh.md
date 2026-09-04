@@ -1,22 +1,44 @@
 # DicomFlow App
 
-把医院 CT / MRI 压缩包（zip / rar / 7z）在**本机**转成 MP4 或 GIF，用普通播放器就能看，不必装专业阅片软件。
-
-全程**离线**。便于沟通查阅，**不作诊断依据**。
+把医院给的 CT / MRI 压缩包（zip / rar / 7z）在**本机**转成 MP4 或 GIF，用普通播放器就能看，不必装专业阅片软件。
 
 [English](README.md)
 
-## 能做什么
+<p align="center">
+  <img src="docs/screenshot.png" alt="DicomFlow 转换页：打开医院给的 zip、rar 或 7z，在本机转换" width="880">
+</p>
 
-- 本机转换，按片预览，捏合或滚轮放大
-- Android 系统分享；导出一个带日期的 zip
-- 历史保留 1 / 7 / 30 天（缩短且会删文件时需确认）
+全程**离线**。便于沟通查阅，**不作诊断依据**。
 
-## 平台
+## 下载
 
-产品目标是 **Android** 与 **Windows**。**macOS** 用于开发验证。
+安装包在 [Releases](https://github.com/AlexWuYh/DicomFLow-App/releases/latest)：
 
-## 开发
+| 平台 | 文件 | 说明 |
+|------|------|------|
+| **Android** | `DicomFlow-v*-android.apk` | 直接安装 APK，未上架应用商店 |
+| **Windows** | `DicomFlow-v*-windows.zip` | 解压即用，已含 ffmpeg 和 7-Zip |
+| macOS | `DicomFlow-v*-macos.zip` | 方便在 Mac 上试用，不是商店版 |
+
+产品目标是 Android 与 Windows。
+
+## 怎么用
+
+1. 打开医院给的 zip / rar / 7z。
+2. 选 **MP4**（发给医生播放更合适）或 **GIF**。多个序列可以合并成一个文件。
+3. 按片预览，捏合或滚轮放大，然后 **分享此文件**，或 **导出** 全部结果（带日期的 zip）。
+
+**分享**只发送正在预览的那一个文件。**导出**才打包全部结果。
+
+历史只留在本机，可设 1 / 7 / 30 天。缩短保留时间会删文件，需确认。
+
+## 不会做的事
+
+- 诊断：没有测量、调窗、MPR
+- 上传：除非你自己分享，影像不会离开这台设备
+- 账号、密码、云端
+
+## 从源码构建
 
 需要 Flutter 3.44+。
 
@@ -29,9 +51,9 @@ flutter test
 flutter run -d macos
 ```
 
-日常在 **`dev`** 开发。发版代码合进 **`main`**（流水线只在 `main` 跑测试）。打并推送 **`v*`** 标签才会编译安装包并发布 GitHub Release。
+日常在 **`dev`** 开发。发版合进 **`main`**。打并推送 **`v*`** 标签才会出安装包。打标签前把本版说明写进 [`.github/release-notes.md`](.github/release-notes.md)。
 
-引擎：[DicomFlow](https://github.com/AlexWuYh/DicomFlow)。Agent 说明：[AGENTS.md](./AGENTS.md)。
+引擎：[DicomFlow](https://github.com/AlexWuYh/DicomFlow)。协作者说明：[AGENTS.md](./AGENTS.md)。
 
 ## 许可
 

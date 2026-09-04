@@ -119,6 +119,7 @@ ThemeData buildAppTheme({required Brightness brightness}) {
           fontSize: 12,
           fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
           color: selected ? primary : muted,
+          fontFamilyFallback: AppFonts.fallback,
         );
       }),
       iconTheme: WidgetStateProperty.resolveWith((states) {
@@ -144,11 +145,13 @@ ThemeData buildAppTheme({required Brightness brightness}) {
         color: primary,
         fontWeight: FontWeight.w700,
         fontSize: 12,
+        fontFamilyFallback: AppFonts.fallback,
       ),
       unselectedLabelTextStyle: TextStyle(
         color: muted,
         fontWeight: FontWeight.w500,
         fontSize: 12,
+        fontFamilyFallback: AppFonts.fallback,
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
@@ -161,7 +164,11 @@ ThemeData buildAppTheme({required Brightness brightness}) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadii.control),
         ),
-        textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+        textStyle: const TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 15,
+          fontFamilyFallback: AppFonts.fallback,
+        ),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
