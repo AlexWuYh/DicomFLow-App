@@ -1,6 +1,6 @@
 # 里程碑
 
-当前：`M31` `done`
+当前：`M32` `done`
 
 产品 P0 平台：**Android + Windows**。
 
@@ -40,6 +40,7 @@ M0–M4 产品主线已完成（macOS + 本机 ffmpeg 可验证）。M5–M9 消
 | M29 | 手机预览多文件：底部切换条 + 列表弹层 | `done` |
 | M30 | 分享按钮标明只发当前预览文件 | `done` |
 | M31 | 去掉与「导出到文件夹」重复的下载/保存按钮 | `done` |
+| M32 | 手机合并成一个文件不再 OOM | `done` |
 
 ---
 
@@ -521,7 +522,7 @@ macOS 验证：转换后第三步出现预览器。历史列表仍是空壳（M3
 **范围内**
 
 - 仓库 `AlexWuYh/DicomFLow-App`；默认工作分支 `dev`
-- `.github/workflows/ci.yml`：`main` 与指向 `main` 的 PR 跑 analyze + test；`dev` 推送不跑；仅 `v*` 标签编译三端包并发布 GitHub Release
+- `.github/workflows/ci.yml`：`main` 与指向 `main` 的 PR 跑 analyze + test；`dev` 推送不跑；仅 `v*` 标签编译三端包并发布 GitHub Release；Release 正文来自 `.github/release-notes.md`
 - Android 为 debug 签名 APK（无商店证书）；macOS 为 ad-hoc `.app` zip；Windows 为 Release 目录 zip（含 ffmpeg）
 
 **验收**
@@ -686,5 +687,26 @@ macOS 验证：转换后第三步出现预览器。历史列表仍是空壳（M3
 **验收**
 
 - [x] `flutter analyze` / `flutter test`
+
+每轮完成定义：**代码 + 测试 + 对本里程碑的 review（无新的 must-fix）+ D2D 文档同步。**
+
+---
+
+## M32 — 手机合并不再 OOM
+
+**目标**：勾选「合并成一个文件」转换医院包时，Android 不再因内存不足失败。
+
+**范围内**
+
+- 各序列仍单独编码；合并改为 ffmpeg 拼接已编码文件 + 黑场
+- 不再把全部序列的 RGB 帧留在内存
+- Android `largeHeap`；OOM 提示关掉合并或降低清晰度
+
+**范围外**：改窗位/发现逻辑；一次只解一帧的流式解码（单序列仍可能很大）。
+
+**验收**
+
+- [x] `flutter analyze` / `flutter test`
+- [x] 合成两序列 merge 仍为 2 + 4 黑场 + 2 帧
 
 每轮完成定义：**代码 + 测试 + 对本里程碑的 review（无新的 must-fix）+ D2D 文档同步。**

@@ -206,26 +206,8 @@ class _HomePageState extends State<HomePage> {
       try {
         await FilePicker.clearTemporaryFiles();
       } catch (_) {}
-    } on EngineException catch (e) {
-      _deleteFailedOutput(outDir);
-      await _persistJob(
-        JobRecord(
-          id: '$stamp',
-          createdAt: created,
-          completedAt: DateTime.now(),
-          status: 'FAILED',
-          sourceFilename: p.basename(zip.path),
-          errorCode: e.code,
-          errorMessage: e.message,
-        ),
-      );
-      if (!mounted) return;
-      setState(() {
-        _busy = false;
-        _error = (e.detail == null || e.detail!.isEmpty) ? e.message : '${e.message}\n${e.detail}';
-        _proc = ProgressEvent(phase: 'FAILED', percent: 0, message: '${e.code}: ${e.message}');
-      });
     } catch (e) {
+      final err = convertErrorFrom(e);
       _deleteFailedOutput(outDir);
       await _persistJob(
         JobRecord(
@@ -234,15 +216,17 @@ class _HomePageState extends State<HomePage> {
           completedAt: DateTime.now(),
           status: 'FAILED',
           sourceFilename: p.basename(zip.path),
-          errorCode: EngineException.convertError,
-          errorMessage: e.toString(),
+          errorCode: err.code,
+          errorMessage: err.message,
         ),
       );
       if (!mounted) return;
       setState(() {
         _busy = false;
-        _error = e.toString();
-        _proc = ProgressEvent(phase: 'FAILED', percent: 0, message: e.toString());
+        _error = (err.detail == null || err.detail!.isEmpty)
+            ? err.message
+            : '${err.message}\n${err.detail}';
+        _proc = ProgressEvent(phase: 'FAILED', percent: 0, message: '${err.code}: ${err.message}');
       });
     }
   }

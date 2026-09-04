@@ -47,8 +47,6 @@ class ConvertResult {
   List<File> get outputFiles => seriesOutputs;
 }
 
-const blackSeconds = 0.4;
-
 Future<ConvertResult> convertDicomPackage({
   required FileSystemEntity input,
   required Directory outputDir,
@@ -113,7 +111,6 @@ Future<ConvertResult> _convertBody({
 
   final used = <String>{};
   final artifacts = <SeriesArtifact>[];
-  final preparedSeries = <List<WindowResult>>[];
   final skippedReasons = <String>[];
   for (var s = 0; s < seriesList.length; s++) {
     final series = seriesList[s];
@@ -184,9 +181,6 @@ Future<ConvertResult> _convertBody({
         height: prepared.first.height,
       ),
     );
-    if (params.merge) {
-      preparedSeries.add(prepared);
-    }
   }
 
   if (artifacts.isEmpty) {
@@ -197,64 +191,39 @@ Future<ConvertResult> _convertBody({
     );
   }
 
-  emit(
-    const ProgressEvent(phase: 'PACKAGING', percent: 95, message: '整理输出…'),
-  );
   File? bundle;
-  if (params.merge && preparedSeries.length > 1) {
+  if (params.merge && artifacts.length > 1) {
     emit(const ProgressEvent(phase: 'PACKAGING', percent: 92, message: '合并序列…'));
     var tw = 0;
     var th = 0;
-    for (final frames in preparedSeries) {
-      tw = math.max(tw, frames.first.width);
-      th = math.max(th, frames.first.height);
+    for (final item in artifacts) {
+      tw = math.max(tw, item.width);
+      th = math.max(th, item.height);
     }
     if (tw % 2 != 0) tw += 1;
     if (th % 2 != 0) th += 1;
-    final blackCount = math.max(1, (blackSeconds * fps).round());
-    final mergedFrames = <WindowResult>[];
-    for (var i = 0; i < preparedSeries.length; i++) {
-      for (final frame in preparedSeries[i]) {
-        mergedFrames.add(fitPad(frame, tw, th));
-      }
-      if (i < preparedSeries.length - 1) {
-        final black = blackFrame(tw, th);
-        for (var b = 0; b < blackCount; b++) {
-          mergedFrames.add(black);
-        }
-      }
-    }
     final gif = params.format == OutputFormat.gif;
-    if (gif && mergedFrames.length > profile.gifMaxFrames) {
-      final src = List<WindowResult>.from(mergedFrames);
-      final stride = math.max(1, (src.length / profile.gifMaxFrames).ceil());
-      mergedFrames
-        ..clear()
-        ..addAll([for (var i = 0; i < src.length; i += stride) src[i]]);
-    }
     final mergedFile = File(p.join(outputDir.path, gif ? 'merged.gif' : 'merged.mp4'));
-    if (gif) {
-      await writeGif(
-        frames: mergedFrames,
-        output: mergedFile,
-        fps: fps,
-        maxColors: profile.gifColors,
-        ffmpegPath: ffmpegPath,
-      );
-    } else {
-      await writeMp4(
-        frames: mergedFrames,
-        output: mergedFile,
-        fps: fps,
-        crf: profile.mp4Crf,
-        ffmpegPath: ffmpegPath,
-      );
-    }
+    final mergedCount = mergedOutputFrameCount(
+      artifacts.map((s) => s.frameCount),
+      fps,
+    );
+    await concatSeriesWithBlack(
+      videos: [for (final item in artifacts) item.file],
+      output: mergedFile,
+      width: tw,
+      height: th,
+      fps: fps,
+      crf: profile.mp4Crf,
+      gif: gif,
+      gifColors: profile.gifColors,
+      ffmpegPath: ffmpegPath,
+    );
     artifacts.insert(
       0,
       SeriesArtifact(
         file: mergedFile,
-        frameCount: mergedFrames.length,
+        frameCount: mergedCount,
         fps: fps,
         width: tw,
         height: th,
@@ -282,6 +251,9 @@ Future<ConvertResult> _convertBody({
       ),
     );
   }
+  emit(
+    const ProgressEvent(phase: 'PACKAGING', percent: 95, message: '整理输出…'),
+  );
   emit(
     ProgressEvent(
       phase: 'SUCCEEDED',

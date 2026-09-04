@@ -7,7 +7,7 @@
 
 - **名称**：DicomFlow App
 - **一句话**：把医院导出的 DICOM 压缩包在本机转成 MP4/GIF，并在 Android / Windows 上预览、分享、管理历史。
-- **当前里程碑**：M31 `done`（去掉与导出重复的下载/保存按钮）
+- **当前里程碑**：M32 `done`（手机合并成一个文件不再 OOM）
 - **P0 平台**：Android、Windows
 - **本机验证**：macOS（开发机可 `flutter run -d macos` / `flutter build macos`，不替代 Android/Windows 发布验收）
 
@@ -42,13 +42,13 @@ flutter build apk
 flutter build windows
 ```
 
-Git：日常在 **`dev`** 开发；**`main` 只发版**。向 **`main`** 推送（及指向 `main` 的 PR）跑测试。打并推送 **`v*`** 标签才编译安装包并发布 GitHub Release。`dev` 推送不跑流水线。`.github/workflows/ci.yml`。
+Git：日常在 **`dev`** 开发；**`main` 只发版**。向 **`main`** 推送（及指向 `main` 的 PR）跑测试。打并推送 **`v*`** 标签才编译安装包并发布 GitHub Release。`dev` 推送不跑流水线。`.github/workflows/ci.yml`。发版前把本版变更写进 [`.github/release-notes.md`](./.github/release-notes.md)（两三句即可，中英对照）。
 
 ```bash
 git checkout dev
 # 发版：把 dev 合并进 main 并 push
 git checkout main && git merge dev && git push origin main
-# 打 GitHub Release（含三端安装包）：git tag v1.0.1 && git push origin v1.0.1
+# 打 GitHub Release（含三端安装包）：先改 `.github/release-notes.md`，再 git tag v1.0.2 && git push origin v1.0.2
 ```
 
 本机 2026-08-31：Android cmdline-tools 缺失。功能验证用 macOS 打包/运行；不要用 Chrome 勾 P0 验收。

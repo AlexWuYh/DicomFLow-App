@@ -279,6 +279,152 @@ Future<File> writeGif({
   return output;
 }
 
+/// 0.4s black between series, same as DicomFlow merge.
+const blackSecondsForMerge = 0.4;
+
+int mergedBlackFrameCount(int fps) =>
+    fps <= 0 ? 1 : (blackSecondsForMerge * fps).round().clamp(1, 0x7fffffff);
+
+int mergedOutputFrameCount(Iterable<int> seriesFrameCounts, int fps) {
+  final counts = seriesFrameCounts.toList();
+  if (counts.isEmpty) return 0;
+  final black = mergedBlackFrameCount(fps);
+  var total = 0;
+  for (final n in counts) {
+    total += n;
+  }
+  return total + black * (counts.length - 1);
+}
+
+/// Inputs are interleaved: series0, black, series1, black, ..., seriesN.
+String mergeConcatFilterGraph({
+  required int seriesCount,
+  required int width,
+  required int height,
+  required int fps,
+}) {
+  final n = seriesCount * 2 - 1;
+  final parts = <String>[];
+  for (var i = 0; i < n; i++) {
+    if (i.isOdd) {
+      parts.add('[$i:v]setsar=1,fps=$fps,format=yuv420p[s$i]');
+    } else {
+      parts.add(
+        '[$i:v]scale=$width:$height:force_original_aspect_ratio=decrease,'
+        'pad=$width:$height:(ow-iw)/2:(oh-ih)/2:black,setsar=1,fps=$fps,format=yuv420p[s$i]',
+      );
+    }
+  }
+  final concatIn = [for (var i = 0; i < n; i++) '[s$i]'].join();
+  parts.add('$concatIn concat=n=$n:v=1:a=0[v]');
+  return parts.join(';');
+}
+
+/// Join already-encoded series with a short black gap. Avoids holding every
+/// RGB frame in RAM (hospital studies OOM on phones if we concatenate pixels).
+Future<File> concatSeriesWithBlack({
+  required List<File> videos,
+  required File output,
+  required int width,
+  required int height,
+  required int fps,
+  required int crf,
+  required bool gif,
+  int gifColors = 256,
+  String? ffmpegPath,
+}) async {
+  if (videos.length < 2) {
+    throw const EngineException(EngineException.convertError, '合并至少需要两个序列');
+  }
+  for (final f in videos) {
+    if (!f.existsSync() || f.lengthSync() == 0) {
+      throw const EngineException(EngineException.convertError, '合并时找不到已编码的序列文件');
+    }
+  }
+  final blackFrames = mergedBlackFrameCount(fps);
+  final black = blackFrame(width, height);
+  final gap = List<WindowResult>.filled(blackFrames, black);
+  final blackFile = File(
+    p.join(output.parent.path, gif ? '_merge_black.gif' : '_merge_black.mp4'),
+  );
+  try {
+    if (gif) {
+      await writeGif(
+        frames: gap,
+        output: blackFile,
+        fps: fps,
+        maxColors: gifColors,
+        ffmpegPath: ffmpegPath,
+      );
+    } else {
+      await writeMp4(
+        frames: gap,
+        output: blackFile,
+        fps: fps,
+        crf: crf,
+        ffmpegPath: ffmpegPath,
+      );
+    }
+    final args = <String>['-y', '-nostdin'];
+    for (var i = 0; i < videos.length; i++) {
+      args.addAll(['-i', videos[i].path]);
+      if (i < videos.length - 1) {
+        args.addAll(['-i', blackFile.path]);
+      }
+    }
+    var graph = mergeConcatFilterGraph(
+      seriesCount: videos.length,
+      width: width,
+      height: height,
+      fps: fps,
+    );
+    if (gif) {
+      graph =
+          '$graph;[v]split[va][vb];[va]palettegen=max_colors=$gifColors:stats_mode=full[p];'
+          '[vb][p]paletteuse=dither=bayer[g]';
+      args.addAll(['-filter_complex', graph, '-map', '[g]', '-an', output.path]);
+    } else {
+      args.addAll([
+        '-filter_complex',
+        graph,
+        '-map',
+        '[v]',
+        '-an',
+        '-c:v',
+        'libx264',
+        '-pix_fmt',
+        'yuv420p',
+        '-crf',
+        '$crf',
+        '-preset',
+        'medium',
+        output.path,
+      ]);
+    }
+    final result = await runFfmpeg(args, ffmpegPath: ffmpegPath);
+    if (result.exitCode != 0 || !output.existsSync() || output.lengthSync() == 0) {
+      throw convertErrorFrom(
+        EngineException(
+          EngineException.convertError,
+          '合并编码失败',
+          detail: result.stderr.toString().trim(),
+        ),
+      );
+    }
+  } on EngineException {
+    rethrow;
+  } catch (e) {
+    throw convertErrorFrom(e, '合并编码失败');
+  } finally {
+    if (blackFile.existsSync()) {
+      try {
+        blackFile.deleteSync();
+      } catch (_) {}
+    }
+  }
+  return output;
+}
+
 int probeFrameCount(File mp4, {String? ffprobePath}) {
   final bin = ffprobePath ??
       (File('/opt/homebrew/bin/ffprobe').existsSync()

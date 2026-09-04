@@ -149,6 +149,7 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           path: dist
@@ -162,15 +163,5 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           name: DicomFlow ${{ github.ref_name }}
-          generate_release_notes: true
           files: out/*
-          body: |
-            Convert hospital DICOM archives to MP4/GIF on this device. Offline. Not for diagnosis.
-
-            医院 DICOM 压缩包本机转成 MP4/GIF。全程离线，不作诊断依据。
-
-            | File | Notes |
-            | --- | --- |
-            | `DicomFlow-${{ github.ref_name }}-android.apk` | Debug-signed; not for Play Store |
-            | `DicomFlow-${{ github.ref_name }}-macos.zip` | Ad-hoc signed `.app`; not notarized |
-            | `DicomFlow-${{ github.ref_name }}-windows.zip` | Portable Release folder, includes ffmpeg and 7-Zip |
+          body_path: .github/release-notes.md

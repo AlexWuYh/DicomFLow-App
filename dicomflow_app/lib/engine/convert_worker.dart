@@ -125,18 +125,13 @@ void convertIsolateMain(SendPort parent) {
             },
         ],
       });
-    } on EngineException catch (e) {
-      parent.send({
-        'ok': false,
-        'error': e.message,
-        'code': e.code,
-        'detail': e.detail,
-      });
     } catch (e) {
+      final err = convertErrorFrom(e);
       parent.send({
         'ok': false,
-        'error': e.toString(),
-        'code': EngineException.convertError,
+        'error': err.message,
+        'code': err.code,
+        'detail': err.detail,
       });
     }
   });
