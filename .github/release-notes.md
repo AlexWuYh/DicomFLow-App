@@ -1,8 +1,8 @@
-**1.0.2**
+**1.0.3**
 
-手机勾选「合并成一个文件」时，不再因为内存不足失败。各序列先单独编码，再拼成一个文件。
+说明改成「医院 CT / MRI 片子」，不再只写 DICOM。README 增加截图和可转换的片源（zip / rar / 7z、.dcm）。
 
-Merging series into one file no longer runs out of memory on phones.
+About copy now says hospital CT / MRI scans, not only DICOM. README adds a screenshot and lists what you can convert (zip / rar / 7z, .dcm).
 
 全程离线，不作诊断依据。 Offline. Not for diagnosis.
 

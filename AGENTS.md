@@ -48,7 +48,7 @@ Git：日常在 **`dev`** 开发；**`main` 只发版**。向 **`main`** 推送�
 git checkout dev
 # 发版：把 dev 合并进 main 并 push
 git checkout main && git merge dev && git push origin main
-# 打 GitHub Release（含三端安装包）：先改 `.github/release-notes.md`，再 git tag v1.0.2 && git push origin v1.0.2
+# 打 GitHub Release（含三端安装包）：先改 `.github/release-notes.md`，再 git tag v1.0.3 && git push origin v1.0.3
 ```
 
 本机 2026-08-31：Android cmdline-tools 缺失。功能验证用 macOS 打包/运行；不要用 Chrome 勾 P0 验收。
