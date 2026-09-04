@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
+import 'package:koni_archive/io.dart' as koni;
 import 'package:path/path.dart' as p;
 
 import '../domain/errors.dart';
@@ -13,7 +15,7 @@ const maxRatio = 100.0;
 const ratioFloorBytes = 32 * 1024 * 1024;
 const maxInputBytes = 1024 * 1024 * 1024;
 
-/// Android JNI / tests: extract [archive] into [dest] without a CLI binary.
+/// Tests: extract [archive] into [dest] without a real decoder.
 Future<void> Function(File archive, Directory dest)? bundledArchiveExtract;
 
 bool isUnsafeArchiveName(String name) {
@@ -292,10 +294,8 @@ Future<void> _extractWithTool(File archive, Directory dest, {required String kin
 
   final tool = resolveExtractor(kind);
   if (tool == null) {
-    throw EngineException(
-      EngineException.invalidArchive,
-      '无法解压 $kind：安装包内解压组件不可用。请把压缩包转为 zip 后再试。',
-    );
+    await extractArchiveWithKoni(archive, dest);
+    return;
   }
 
   final listed = await listArchiveMembers(tool, archive);
@@ -534,6 +534,122 @@ bool _canExecute(String name) {
     } catch (_) {
       return false;
     }
+  }
+}
+
+/// Stream rar / 7z with pure Dart (Android has no bundled 7zz).
+Future<void> extractArchiveWithKoni(File archive, Directory dest) async {
+  dest.createSync(recursive: true);
+  final err = await Isolate.run(
+    () => koniExtractToDir(archive.path, dest.path),
+  );
+  if (err != null) {
+    throw EngineException(
+      err['code'] ?? EngineException.invalidArchive,
+      err['message'] ?? '无法解压',
+      detail: err['detail'],
+    );
+  }
+}
+
+/// Isolate entry: returns null on success, or a sendable error map.
+Future<Map<String, String>?> koniExtractToDir(
+  String archivePath,
+  String destPath,
+) async {
+  final dest = Directory(destPath)..createSync(recursive: true);
+  koni.Archive? opened;
+  try {
+    opened = await koni.openArchiveFile(
+      archivePath,
+      options: const koni.ArchiveReadOptions(
+        maxEntryCount: maxExtractFiles,
+        maxEntrySize: maxExtractBytes,
+      ),
+    );
+    var files = 0;
+    var bytes = 0;
+    for (final entry in opened.entries) {
+      if (entry.pathEscapedRoot) {
+        return {
+          'code': EngineException.invalidArchive,
+          'message': '归档包含非法路径（Zip Slip）',
+          'detail': entry.path,
+        };
+      }
+      if (entry.isEncrypted) {
+        return {
+          'code': EngineException.invalidArchive,
+          'message': '不支持加密压缩包',
+          'detail': entry.path,
+        };
+      }
+      if (entry.type == koni.ArchiveEntryType.symlink ||
+          entry.type == koni.ArchiveEntryType.hardlink) {
+        return {
+          'code': EngineException.invalidArchive,
+          'message': '归档包含非法路径（符号链接）',
+          'detail': entry.path,
+        };
+      }
+      final rel = archiveMemberRelative(entry.path);
+      if (rel == null) continue;
+      if (isUnsafeArchiveName(entry.path)) {
+        return {
+          'code': EngineException.invalidArchive,
+          'message': '归档包含非法路径（Zip Slip）',
+          'detail': entry.path,
+        };
+      }
+      final target = File(p.join(dest.path, rel));
+      if (_escapesDest(dest.path, target.path)) {
+        return {
+          'code': EngineException.invalidArchive,
+          'message': '归档包含非法路径（Zip Slip）',
+          'detail': entry.path,
+        };
+      }
+      if (entry.isDirectory) {
+        Directory(target.path).createSync(recursive: true);
+        continue;
+      }
+      if (!entry.isFile) continue;
+
+      files += 1;
+      if (files > maxExtractFiles) {
+        return {
+          'code': EngineException.archiveBomb,
+          'message': '归档内文件数超过限制',
+          'detail': 'count=$files',
+        };
+      }
+      target.parent.createSync(recursive: true);
+      final sink = target.openWrite();
+      try {
+        await for (final chunk in opened.openRead(entry)) {
+          bytes += chunk.length;
+          if (bytes > maxExtractBytes) {
+            return {
+              'code': EngineException.archiveBomb,
+              'message': '解压后体积超过限制',
+              'detail': 'bytes=$bytes',
+            };
+          }
+          sink.add(chunk);
+        }
+      } finally {
+        await sink.close();
+      }
+    }
+    return null;
+  } catch (e) {
+    return {
+      'code': EngineException.invalidArchive,
+      'message': '无法解压',
+      'detail': e.toString(),
+    };
+  } finally {
+    await opened?.close();
   }
 }
 

@@ -31,7 +31,7 @@
     ├── tool/render_app_icon.py  # BrandMark → 各平台图标
     ├── third_party/ffmpeg/ # 下载缓存（gitignore）
     ├── third_party/7zip/   # 下载缓存（gitignore）
-    ├── android/            # P0；FFmpegKit + 7-Zip-JBinding
+    ├── android/            # P0；FFmpegKit；rar/7z 用 koni_archive
     ├── windows/            # P0；runner/resources/ffmpeg + 7zip
     └── macos/              # Runner/Resources/ffmpeg + 7zz
 ```

@@ -48,7 +48,3 @@ kotlin {
 flutter {
     source = "../.."
 }
-
-dependencies {
-    implementation("com.github.omicronapps:7-Zip-JBinding-4Android:Release-16.02-2.03")
-}

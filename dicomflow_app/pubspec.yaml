@@ -43,6 +43,7 @@ dependencies:
   image: ^4.9.2
   ffmpeg_kit_flutter_new_min_gpl: ^2.6.2
   desktop_drop: ^0.8.4
+  koni_archive: ^0.9.0
 
 dev_dependencies:
   flutter_test:

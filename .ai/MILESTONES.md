@@ -1,6 +1,6 @@
 # 里程碑
 
-当前：`M26` `done`
+当前：`M27` `done`
 
 产品 P0 平台：**Android + Windows**。
 
@@ -35,6 +35,7 @@ M0–M4 产品主线已完成（macOS + 本机 ffmpeg 可验证）。M5–M9 消
 | M24 | README 英文为默认；GitHub 仓库 About 中英对照 | `done` |
 | M25 | 安装包捆绑 rar/7z 解压（Android JNI + 桌面 7-Zip） | `done` |
 | M26 | Android 选 rar 开始转换不再闪退 | `done` |
+| M27 | Android rar/7z 改用 Dart 解压，去掉会闪退的 JNI | `done` |
 
 ---
 
@@ -576,6 +577,27 @@ macOS 验证：转换后第三步出现预览器。历史列表仍是空壳（M3
 - MethodChannel 捕获 `Throwable`，Dart 侧把 `PlatformException` 收成可读错误
 
 **范围外**：密码包、分卷 rar、本机无 Android SDK 的真机复测（需新 APK）。
+
+**验收**
+
+- [x] `flutter analyze` / `flutter test`
+
+每轮完成定义：**代码 + 测试 + 对本里程碑的 review（无新的 must-fix）+ D2D 文档同步。**
+
+---
+
+## M27 — Android 用 Dart 解 rar/7z
+
+**目标**：Android 解医院 rar 不再走 7-Zip JNI（1300+ 文件会 native 崩溃）；改用纯 Dart 流式解压。
+
+**范围内**
+
+- `koni_archive` 解 rar/7z（已用医院 `C252708.rar` RAR5、1303 项验证可列出并抽出文件）
+- 无系统/包内 7zz 时走 koni；桌面仍优先捆绑 7-Zip
+- 去掉 7-Zip-JBinding、JitPack、MethodChannel 解压
+- isolate 中解压，Zip Slip / symlink / 加密 / 体积限额仍生效
+
+**范围外**：密码包、分卷 rar。真机验收需新 APK。
 
 **验收**
 

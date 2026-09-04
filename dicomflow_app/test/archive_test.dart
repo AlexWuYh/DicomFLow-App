@@ -200,6 +200,29 @@ void main() {
     expect(File(p.join(out.path, 'x.dcm')).readAsBytesSync(), [1, 2, 3]);
   });
 
+  test('koni extracts a generated 7z without a CLI tool', () async {
+    final zz = File(p.join('macos', 'Runner', 'Resources', '7zz'));
+    if (!zz.existsSync()) {
+      markTestSkipped('run dart run tool/fetch_7zip.dart');
+      return;
+    }
+    final tmp = Directory.systemTemp.createTempSync('dicomflow_koni_');
+    addTearDown(() {
+      if (tmp.existsSync()) tmp.deleteSync(recursive: true);
+    });
+    File(p.join(tmp.path, 'x.dcm')).writeAsBytesSync(const [1, 2, 3]);
+    final seven = p.join(tmp.path, 't.7z');
+    final packed = Process.runSync(
+      zz.absolute.path,
+      ['a', seven, 'x.dcm'],
+      workingDirectory: tmp.path,
+    );
+    expect(packed.exitCode, 0, reason: '${packed.stderr}\n${packed.stdout}');
+    final dest = Directory(p.join(tmp.path, 'out'))..createSync();
+    await extractArchiveWithKoni(File(seven), dest);
+    expect(File(p.join(dest.path, 'x.dcm')).readAsBytesSync(), [1, 2, 3]);
+  });
+
   test('empty zip is not a bomb, just empty dest', () async {
     final zip = ZipEncoder().encodeBytes(Archive());
     final tmp = Directory.systemTemp.createTempSync('dicomflow_empty_');

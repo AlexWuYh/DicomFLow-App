@@ -10,12 +10,10 @@ import '../domain/convert_params.dart';
 import '../domain/errors.dart';
 import '../domain/job.dart';
 import '../domain/progress.dart';
-import '../engine/archive.dart';
 import '../engine/convert_worker.dart';
 import '../engine/encode.dart';
 import '../engine/ffmpeg_kit_runner.dart';
 import '../engine/pipeline.dart';
-import '../engine/sevenzip_kit_runner.dart';
 import '../history/jobs_controller.dart';
 import '../history/paths.dart';
 import 'theme.dart';
@@ -155,7 +153,6 @@ class _HomePageState extends State<HomePage> {
       final ConvertResult result;
       if (Platform.isAndroid) {
         ffmpegProcess = ffmpegProcessKit;
-        bundledArchiveExtract = extractWithAndroidSevenZip;
         result = await convertDicomPackage(
           input: zip,
           outputDir: outDir,

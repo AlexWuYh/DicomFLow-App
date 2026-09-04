@@ -7,7 +7,7 @@
 
 - **名称**：DicomFlow App
 - **一句话**：把医院导出的 DICOM 压缩包在本机转成 MP4/GIF，并在 Android / Windows 上预览、分享、管理历史。
-- **当前里程碑**：M26 `done`（Android rar 转换闪退）
+- **当前里程碑**：M27 `done`（Android rar 改用 Dart 解压，去掉 JNI）
 - **P0 平台**：Android、Windows
 - **本机验证**：macOS（开发机可 `flutter run -d macos` / `flutter build macos`，不替代 Android/Windows 发布验收）
 
@@ -55,7 +55,7 @@ git checkout main && git merge dev && git push origin main
 
 转换用捆绑 **ffmpeg**（`dart run tool/fetch_ffmpeg.dart`）：macOS 为 Resources 内 9.0.1 静态包，Windows 为 exe 旁 `ffmpeg.exe`。Android 走 FFmpegKit min-gpl（x264），不依赖系统 ffmpeg。`flutter run -d android` 仍需本机 Android SDK。
 
-rar / 7z 解压用捆绑 **7-Zip**（`dart run tool/fetch_7zip.dart`）：macOS 为 Resources 内 `7zz`，Windows 为 exe 旁 `7z.exe` + `7z.dll`。Android 走 7-Zip-JBinding（JNI，含 RAR5），不依赖系统 unar/7z。
+rar / 7z 解压：桌面捆绑 **7-Zip**（`dart run tool/fetch_7zip.dart`）；Android 用纯 Dart `koni_archive`，不加载 JNI 解压库。
 
 真实医院压缩包只放 `testdata/private/`（已 gitignore）。禁止 `git add -f` 该目录。
 
