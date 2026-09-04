@@ -44,7 +44,7 @@ const qualityProfiles = <Quality, QualityProfile>{
     gifMaxSide: 256,
     gifMaxFrames: 80,
     gifColors: 64,
-    fpsCap: 8,
+    fpsCap: 10,
   ),
   Quality.medium: QualityProfile(
     scale: 1.0,
@@ -67,3 +67,11 @@ const qualityProfiles = <Quality, QualityProfile>{
 };
 
 QualityProfile profileFor(Quality quality) => qualityProfiles[quality]!;
+
+/// Common cine rates. Kept short so the convert chips stay on one phone row.
+const fpsChoices = [5, 10, 15];
+
+List<int> fpsChoicesFor(Quality quality) {
+  final cap = profileFor(quality).fpsCap;
+  return [for (final n in fpsChoices) if (cap == null || n <= cap) n];
+}

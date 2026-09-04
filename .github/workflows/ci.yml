@@ -165,8 +165,6 @@ jobs:
           generate_release_notes: true
           files: out/*
           body: |
-            First packaged build of DicomFlow App.
-
             Convert hospital DICOM archives to MP4/GIF on this device. Offline. Not for diagnosis.
 
             医院 DICOM 压缩包本机转成 MP4/GIF。全程离线，不作诊断依据。

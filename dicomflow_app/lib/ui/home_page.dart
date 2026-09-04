@@ -20,6 +20,7 @@ import 'theme.dart';
 import 'viewer/series_previewer.dart';
 import 'widgets/brand_mark.dart';
 import 'widgets/convert_steps.dart';
+import 'widgets/preview_file_switcher.dart';
 import 'widgets/result_action_bar.dart';
 import 'widgets/workspace.dart';
 
@@ -289,8 +290,10 @@ class _HomePageState extends State<HomePage> {
                     ? null
                     : (v) => setState(() {
                           _quality = v;
-                          final cap = profileFor(v).fpsCap;
-                          if (cap != null && _fps > cap) _fps = cap;
+                          final allowed = fpsChoicesFor(v);
+                          if (!allowed.contains(_fps)) {
+                            _fps = allowed.isEmpty ? 10 : allowed.last;
+                          }
                         }),
                 onFps: _busy ? null : (v) => setState(() => _fps = v),
                 onMerge: _busy ? null : (v) => setState(() => _merge = v),
@@ -403,10 +406,7 @@ class _SetupWorkspace extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = DicomFlowTokens.of(context);
-    final fpsItems = [
-      for (final n in const [5, 8, 10, 12, 15, 24, 30])
-        if (profileFor(quality).fpsCap == null || n <= profileFor(quality).fpsCap!) n,
-    ];
+    final fpsItems = fpsChoicesFor(quality);
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -761,16 +761,28 @@ class _ResultWorkspace extends StatelessWidget {
       children: [
         Expanded(child: preview),
         actions,
-        _ResultHeader(onNew: onNew),
-        SizedBox(
-          height: 96,
-          child: _SeriesFileList(
-            result: result,
-            selected: selected,
-            onSelect: onSelect,
-            horizontal: true,
+        if (result.series.length > 1)
+          PreviewFileSwitcher(
+            items: [
+              for (final s in result.series)
+                PreviewFileItem(
+                  id: s.file.path,
+                  title: p.basename(s.file.path),
+                  subtitle: s.isZip ? '打包全部序列' : '${s.frameCount} 片 · ${s.fps} fps',
+                  icon: s.isZip ? Icons.folder_zip_outlined : Icons.movie_outlined,
+                ),
+            ],
+            selectedId: selected.file.path,
+            onSelected: (id) {
+              for (final s in result.series) {
+                if (s.file.path == id) {
+                  onSelect(s);
+                  break;
+                }
+              }
+            },
           ),
-        ),
+        _ResultHeader(onNew: onNew),
       ],
     );
   }
@@ -802,57 +814,15 @@ class _SeriesFileList extends StatelessWidget {
     required this.result,
     required this.selected,
     required this.onSelect,
-    this.horizontal = false,
   });
 
   final ConvertResult result;
   final SeriesArtifact selected;
   final ValueChanged<SeriesArtifact> onSelect;
-  final bool horizontal;
 
   @override
   Widget build(BuildContext context) {
     final tokens = DicomFlowTokens.of(context);
-    if (horizontal) {
-      return ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
-        itemCount: result.series.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final item = result.series[index];
-          final on = item.file.path == selected.file.path;
-          return SizedBox(
-            width: 200,
-            child: WorkspaceCard(
-              selected: on,
-              onTap: () => onSelect(item),
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    p.basename(item.file.path),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  Text(
-                    item.isZip ? '打包全部序列' : '${item.frameCount} 片 · ${item.fps} fps',
-                    style: TextStyle(color: tokens.muted2, fontSize: 11),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    }
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 16),
       itemCount: result.series.length,

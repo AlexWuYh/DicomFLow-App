@@ -7,7 +7,7 @@
 
 - **名称**：DicomFlow App
 - **一句话**：把医院导出的 DICOM 压缩包在本机转成 MP4/GIF，并在 Android / Windows 上预览、分享、管理历史。
-- **当前里程碑**：M27 `done`（Android rar 改用 Dart 解压，去掉 JNI）
+- **当前里程碑**：M31 `done`（去掉与导出重复的下载/保存按钮）
 - **P0 平台**：Android、Windows
 - **本机验证**：macOS（开发机可 `flutter run -d macos` / `flutter build macos`，不替代 Android/Windows 发布验收）
 
@@ -48,7 +48,7 @@ Git：日常在 **`dev`** 开发；**`main` 只发版**。向 **`main`** 推送�
 git checkout dev
 # 发版：把 dev 合并进 main 并 push
 git checkout main && git merge dev && git push origin main
-# 打 GitHub Release（含三端安装包）：git tag v1.0.0 && git push origin v1.0.0
+# 打 GitHub Release（含三端安装包）：git tag v1.0.1 && git push origin v1.0.1
 ```
 
 本机 2026-08-31：Android cmdline-tools 缺失。功能验证用 macOS 打包/运行；不要用 Chrome 勾 P0 验收。

@@ -6,6 +6,7 @@ import '../engine/pipeline.dart';
 import '../history/jobs_controller.dart';
 import 'theme.dart';
 import 'viewer/series_previewer.dart';
+import 'widgets/preview_file_switcher.dart';
 import 'widgets/result_action_bar.dart';
 import 'widgets/workspace.dart';
 
@@ -127,11 +128,6 @@ class _DetailBody extends StatelessWidget {
       sourceFilename: job.sourceFilename,
       compact: !desktop,
     );
-    final files = _FilePane(
-      outputs: job.outputs,
-      selectedPath: selected.file.path,
-      onSelect: onSelect,
-    );
     if (desktop) {
       return Row(
         children: [
@@ -144,7 +140,13 @@ class _DetailBody extends StatelessWidget {
               children: [
                 actions,
                 const Divider(height: 1),
-                Expanded(child: files),
+                Expanded(
+                  child: _FilePane(
+                    outputs: job.outputs,
+                    selectedPath: selected.file.path,
+                    onSelect: onSelect,
+                  ),
+                ),
               ],
             ),
           ),
@@ -153,10 +155,29 @@ class _DetailBody extends StatelessWidget {
     }
     return Column(
       children: [
-        Expanded(flex: 3, child: preview),
+        Expanded(child: preview),
         actions,
-        const Divider(height: 1),
-        Expanded(flex: 2, child: files),
+        if (job.outputs.length > 1)
+          PreviewFileSwitcher(
+            items: [
+              for (final o in job.outputs)
+                PreviewFileItem(
+                  id: o.path,
+                  title: o.name.trim().isNotEmpty ? o.name : File(o.path).uri.pathSegments.last,
+                  subtitle: o.kind == 'zip' ? '打包全部序列' : '${o.frameCount} 片 · ${o.fps} fps',
+                  icon: o.kind == 'zip' ? Icons.folder_zip_outlined : Icons.movie_outlined,
+                ),
+            ],
+            selectedId: selected.file.path,
+            onSelected: (id) {
+              for (final o in job.outputs) {
+                if (o.path == id) {
+                  onSelect(o);
+                  break;
+                }
+              }
+            },
+          ),
       ],
     );
   }
