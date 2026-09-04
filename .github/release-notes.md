@@ -1,8 +1,8 @@
-**1.0.3**
+**1.0.4**
 
-说明改成「医院 CT / MRI 片子」，不再只写 DICOM。README 增加截图和可转换的片源（zip / rar / 7z、.dcm）。
+Windows 改为标准安装包（开始菜单、可卸载）。转换后的 MP4 可以在应用里预览，不再一直转圈。
 
-About copy now says hospital CT / MRI scans, not only DICOM. README adds a screenshot and lists what you can convert (zip / rar / 7z, .dcm).
+Windows now ships a standard installer. Converted MP4 files preview in the app instead of spinning forever.
 
 全程离线，不作诊断依据。 Offline. Not for diagnosis.
 
@@ -10,4 +10,4 @@ About copy now says hospital CT / MRI scans, not only DICOM. README adds a scree
 | --- | --- |
 | `*-android.apk` | Debug-signed; not for Play Store |
 | `*-macos.zip` | Ad-hoc `.app`; not notarized |
-| `*-windows.zip` | Portable folder, includes ffmpeg and 7-Zip |
+| `*-windows-setup.exe` | Inno Setup installer; Start Menu + uninstall |

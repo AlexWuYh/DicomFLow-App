@@ -20,4 +20,12 @@ void main() {
     expect(graph, contains('[1:v]setsar=1,fps=10,format=yuv420p[s1]'));
     expect(graph, contains('[s0][s1][s2] concat=n=3:v=1:a=0[v]'));
   });
+
+  test('mp4 H.264 flags are Windows Media Foundation friendly', () {
+    final args = mp4H264OutputArgs(crf: 23, outputPath: 'out.mp4');
+    expect(args, containsAllInOrder(['-profile:v', 'main']));
+    expect(args, containsAllInOrder(['-pix_fmt', 'yuv420p']));
+    expect(args, containsAllInOrder(['-movflags', '+faststart']));
+    expect(args.last, 'out.mp4');
+  });
 }

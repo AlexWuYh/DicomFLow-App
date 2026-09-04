@@ -143,16 +143,7 @@ Future<File> writeMp4({
       '$fps',
       '-i',
       raw.path,
-      '-an',
-      '-c:v',
-      'libx264',
-      '-pix_fmt',
-      'yuv420p',
-      '-crf',
-      '$crf',
-      '-preset',
-      'medium',
-      output.path,
+      ...mp4H264OutputArgs(crf: crf, outputPath: output.path),
     ], ffmpegPath: ffmpegPath);
     if (result.exitCode != 0 || !output.existsSync() || output.lengthSync() == 0) {
       throw EngineException(
@@ -279,6 +270,28 @@ Future<File> writeGif({
   return output;
 }
 
+/// H.264 flags Windows Media Foundation can play (main + yuv420p + faststart).
+List<String> mp4H264OutputArgs({required int crf, required String outputPath}) {
+  return [
+    '-an',
+    '-c:v',
+    'libx264',
+    '-pix_fmt',
+    'yuv420p',
+    '-profile:v',
+    'main',
+    '-level',
+    '4.0',
+    '-movflags',
+    '+faststart',
+    '-crf',
+    '$crf',
+    '-preset',
+    'medium',
+    outputPath,
+  ];
+}
+
 /// 0.4s black between series, same as DicomFlow merge.
 const blackSecondsForMerge = 0.4;
 
@@ -389,16 +402,7 @@ Future<File> concatSeriesWithBlack({
         graph,
         '-map',
         '[v]',
-        '-an',
-        '-c:v',
-        'libx264',
-        '-pix_fmt',
-        'yuv420p',
-        '-crf',
-        '$crf',
-        '-preset',
-        'medium',
-        output.path,
+        ...mp4H264OutputArgs(crf: crf, outputPath: output.path),
       ]);
     }
     final result = await runFfmpeg(args, ffmpegPath: ffmpegPath);

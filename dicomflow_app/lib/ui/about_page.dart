@@ -8,7 +8,7 @@ import 'settings_page.dart';
 import 'theme.dart';
 import 'widgets/brand_mark.dart';
 
-const kAppVersion = '1.0.3';
+const kAppVersion = '1.0.4';
 const kAuthorGithub = 'AlexWuYh';
 const kAuthorGithubUrl = 'https://github.com/AlexWuYh';
 const kAppRepoUrl = 'https://github.com/AlexWuYh/DicomFLow-App';

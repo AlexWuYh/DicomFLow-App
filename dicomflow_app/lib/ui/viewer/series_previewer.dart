@@ -81,7 +81,7 @@ class _SeriesPreviewerState extends State<SeriesPreviewer> {
     }
     final controller = VideoPlayerController.file(File(file.path));
     try {
-      await controller.initialize();
+      await controller.initialize().timeout(const Duration(seconds: 20));
     } catch (_) {
       await controller.dispose();
       if (!mounted || gen != _openGen) return;
@@ -92,10 +92,15 @@ class _SeriesPreviewerState extends State<SeriesPreviewer> {
       await controller.dispose();
       return;
     }
+    if (!controller.value.isInitialized) {
+      await controller.dispose();
+      setState(() => _failed = true);
+      return;
+    }
     controller.addListener(_onTick);
     _controller = controller;
     setState(() {
-      _ready = controller.value.isInitialized;
+      _ready = true;
       _slice = 1;
     });
   }

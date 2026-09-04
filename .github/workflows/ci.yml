@@ -131,14 +131,22 @@ jobs:
             Copy-Item "$src7/7z.exe" $rel
             Copy-Item "$src7/7z.dll" $rel
           }
-      - name: Zip Release folder
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --no-progress -y
+      - name: Build Windows installer
         shell: pwsh
         run: |
-          Compress-Archive -Path "build/windows/x64/runner/Release/*" -DestinationPath "$env:GITHUB_WORKSPACE/DicomFlow-windows.zip"
+          $ver = $env:GITHUB_REF_NAME
+          if ($ver -like 'v*') { $ver = $ver.Substring(1) } else { $ver = '0.0.0' }
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { $iscc = "${env:ProgramFiles}\Inno Setup 6\ISCC.exe" }
+          & $iscc "/DMyAppVersion=$ver" "windows\installer\dicomflow.iss"
+          if ($LASTEXITCODE -ne 0) { throw "ISCC failed: $LASTEXITCODE" }
       - uses: actions/upload-artifact@v4
         with:
           name: DicomFlow-windows
-          path: DicomFlow-windows.zip
+          path: dicomflow_app/build/windows/installer/DicomFlow-setup.exe
           if-no-files-found: error
 
   release:
@@ -158,7 +166,7 @@ jobs:
           mkdir -p out
           cp dist/DicomFlow-android-apk/app-release.apk "out/DicomFlow-${GITHUB_REF_NAME}-android.apk"
           cp dist/DicomFlow-macos/DicomFlow-macos.zip "out/DicomFlow-${GITHUB_REF_NAME}-macos.zip"
-          cp dist/DicomFlow-windows/DicomFlow-windows.zip "out/DicomFlow-${GITHUB_REF_NAME}-windows.zip"
+          cp dist/DicomFlow-windows/DicomFlow-setup.exe "out/DicomFlow-${GITHUB_REF_NAME}-windows-setup.exe"
           ls -la out
       - uses: softprops/action-gh-release@v2
         with:

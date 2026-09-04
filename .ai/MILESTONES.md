@@ -1,6 +1,6 @@
 # 里程碑
 
-当前：`M32` `done`
+当前：`M33` `done`
 
 产品 P0 平台：**Android + Windows**。
 
@@ -41,6 +41,7 @@ M0–M4 产品主线已完成（macOS + 本机 ffmpeg 可验证）。M5–M9 消
 | M30 | 分享按钮标明只发当前预览文件 | `done` |
 | M31 | 去掉与「导出到文件夹」重复的下载/保存按钮 | `done` |
 | M32 | 手机合并成一个文件不再 OOM | `done` |
+| M33 | Windows 标准安装包；转换后 MP4 能预览 | `done` |
 
 ---
 
@@ -709,5 +710,27 @@ macOS 验证：转换后第三步出现预览器。历史列表仍是空壳（M3
 
 - [x] `flutter analyze` / `flutter test`
 - [x] 合成两序列 merge 仍为 2 + 4 黑场 + 2 帧
+
+每轮完成定义：**代码 + 测试 + 对本里程碑的 review（无新的 must-fix）+ D2D 文档同步。**
+
+---
+
+## M33 — Windows 安装包与预览
+
+**目标**：Windows 用「下一步」安装程序，不再解压绿色包；转换后的 MP4 能在应用内预览。
+
+**范围内**
+
+- Inno Setup 打 `DicomFlow-setup.exe`（开始菜单、可卸载）；exe 名为 `DicomFlow.exe`
+- `video_player_win` 作为 Windows 预览后端（官方 `video_player` 不支持 Windows，会一直转圈）
+- MP4 编码用 main + yuv420p + faststart，方便系统播放器
+- 预览初始化 20 秒超时，失败显示「无法播放」而不是一直转圈
+
+**范围外**：商店签名 / MSIX；本机无 Windows 主机，安装包由标签 CI 产出。
+
+**验收**
+
+- [x] `flutter analyze` / `flutter test`
+- [ ] Windows 真机：安装包可装可卸；转换后 MP4 能预览 — 需 Windows 主机
 
 每轮完成定义：**代码 + 测试 + 对本里程碑的 review（无新的 must-fix）+ D2D 文档同步。**

@@ -17,7 +17,7 @@
 | 平台 | 文件 | 说明 |
 |------|------|------|
 | **Android** | `DicomFlow-v*-android.apk` | 直接安装 APK，未上架应用商店 |
-| **Windows** | `DicomFlow-v*-windows.zip` | 解压即用，已含 ffmpeg 和 7-Zip |
+| **Windows** | `DicomFlow-v*-windows-setup.exe` | 标准安装包（开始菜单、可卸载），已含 ffmpeg 和 7-Zip |
 | macOS | `DicomFlow-v*-macos.zip` | 方便在 Mac 上试用，不是商店版 |
 
 产品目标是 Android 与 Windows。

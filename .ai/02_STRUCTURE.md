@@ -32,7 +32,7 @@
     ├── third_party/ffmpeg/ # 下载缓存（gitignore）
     ├── third_party/7zip/   # 下载缓存（gitignore）
     ├── android/            # P0；FFmpegKit；rar/7z 用 koni_archive
-    ├── windows/            # P0；runner/resources/ffmpeg + 7zip
+    ├── windows/            # P0；runner/resources/ffmpeg + 7zip；installer/ Inno Setup
     └── macos/              # Runner/Resources/ffmpeg + 7zz
 ```
 

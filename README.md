@@ -17,7 +17,7 @@ Installers are on [Releases](https://github.com/AlexWuYh/DicomFLow-App/releases/
 | Platform | File | Notes |
 |----------|------|--------|
 | **Android** | `DicomFlow-v*-android.apk` | Sideload the APK. Not on Play Store. |
-| **Windows** | `DicomFlow-v*-windows.zip` | Unzip and run. ffmpeg and 7-Zip are included. |
+| **Windows** | `DicomFlow-v*-windows-setup.exe` | Standard installer (Start Menu, uninstall). ffmpeg and 7-Zip are included. |
 | macOS | `DicomFlow-v*-macos.zip` | For trying the app on a Mac. Not a store build. |
 
 Android and Windows are the product targets.
